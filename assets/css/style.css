@@ -306,6 +306,7 @@ section { position: relative; }
 .footer__col h4 { font-family: var(--serif); font-size: 20px; margin-bottom: 16px; color: var(--gold-2); }
 .footer__col a { display: block; color: rgba(250,246,237,.75); padding: 5px 0; transition: color .3s, padding .3s; }
 .footer__col a:hover { color: var(--gold-2); padding-right: 6px; }
+.footer__col a[dir="ltr"] { text-align: right; unicode-bidi: plaintext; }
 .footer__bottom { max-width: 1280px; margin: 50px auto 0; padding-top: 24px; border-top: 1px solid rgba(250,246,237,.15); text-align: center; font-size: 14px; color: rgba(250,246,237,.5); }
 
 /* ---------- כפתורים צפים ---------- */
