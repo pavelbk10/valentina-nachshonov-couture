@@ -7,6 +7,7 @@ desktop.ini
 .vscode/
 .idea/
 *.swp
+.history/
 
 # Logs
 *.log
