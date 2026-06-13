@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderStore();
   renderRentals();
   renderBlog();
+  renderInstagram();
   initPortfolio();
   initContactForm();
   initModal();
@@ -329,10 +330,12 @@ function renderBlog() {
 
   // רשימת כל המאמרים
   const list = document.getElementById("blogList");
-  list.innerHTML = ARTICLES.map((a) =>
-    `<button class="blog__list-item" data-id="${a.id}"><b>${a.title}</b><span>${a.category} · ${a.read}</span></button>`).join("");
-  list.querySelectorAll(".blog__list-item").forEach((b) =>
-    b.addEventListener("click", () => openArticleModal(b.dataset.id)));
+  if (list) {
+    list.innerHTML = ARTICLES.map((a) =>
+      `<button class="blog__list-item" data-id="${a.id}"><b>${a.title}</b><span>${a.category} · ${a.read}</span></button>`).join("");
+    list.querySelectorAll(".blog__list-item").forEach((b) =>
+      b.addEventListener("click", () => openArticleModal(b.dataset.id)));
+  }
 
   paint();
 
@@ -357,48 +360,63 @@ function blogCard(a) {
   </article>`;
 }
 
-/* ---------- תיק עבודות ---------- */
-const SEED_PF = [
-  ["#0a1f44", "#16315f", "#c9a14a"],
-  ["#faf6ed", "#e9dec3", "#c9a14a"],
-  ["#c9a14a", "#e6c87a", "#0a1f44"],
-  ["#0d2350", "#1c3a6b", "#faf6ed"],
-];
+/* ---------- פיד אינסטגרם ---------- */
+function renderInstagram() {
+  const grid = document.getElementById("igGrid");
+  if (!grid || typeof INSTAGRAM === "undefined") return;
+
+  grid.innerHTML = INSTAGRAM.map((p) => `
+    <a class="ig-item" href="${p.link}" target="_blank" rel="noopener" aria-label="${p.caption}">
+      <div class="ig-item__ph" style="${swatchStyle(p.palette)}"></div>
+      <img class="ig-item__img" src="${p.img}" alt="${p.caption}" loading="lazy"
+           onerror="this.style.display='none'" />
+      <span class="ig-item__overlay">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2.5" y="2.5" width="19" height="19" rx="5.5"></rect>
+          <circle cx="12" cy="12" r="4.2"></circle>
+          <circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"></circle>
+        </svg>
+        <span class="ig-item__cap">${p.caption}</span>
+      </span>
+    </a>`).join("");
+}
+
+/* ---------- תיק עבודות (קרוסלה: 4 עבודות מתוך 16) ---------- */
+let pfPage = 0;
+const PF_PER = 4;
 function initPortfolio() {
   const grid = document.getElementById("portfolioGrid");
-  const input = document.getElementById("portfolioInput");
-  const btn = document.getElementById("portfolioUploadBtn");
+  const dots = document.getElementById("pfDots");
+  if (!grid || typeof PORTFOLIO === "undefined") return;
+  const pages = Math.ceil(PORTFOLIO.length / PF_PER);
 
-  SEED_PF.forEach((pal) => {
-    const d = document.createElement("div");
-    d.className = "pf-item pf-item--ph";
-    d.style.cssText = swatchStyle(pal);
-    d.innerHTML = "✦";
-    grid.appendChild(d);
-  });
+  const paint = () => {
+    const start = pfPage * PF_PER;
+    grid.innerHTML = PORTFOLIO.slice(start, start + PF_PER).map(pfCard).join("");
+    if (dots) dots.querySelectorAll(".blog__dot").forEach((d, i) => d.classList.toggle("active", i === pfPage));
+  };
 
-  btn.addEventListener("click", () => input.click());
-  input.addEventListener("change", (e) => addFiles(e.target.files));
-
-  ["dragenter", "dragover"].forEach((ev) =>
-    btn.addEventListener(ev, (e) => { e.preventDefault(); btn.classList.add("drag"); }));
-  ["dragleave", "drop"].forEach((ev) =>
-    btn.addEventListener(ev, (e) => { e.preventDefault(); btn.classList.remove("drag"); }));
-  btn.addEventListener("drop", (e) => addFiles(e.dataTransfer.files));
-
-  function addFiles(files) {
-    [...files].filter((f) => f.type.startsWith("image/")).forEach((f) => {
-      const url = URL.createObjectURL(f);
-      const item = document.createElement("div");
-      item.className = "pf-item";
-      item.innerHTML = `<img src="${url}" alt="עבודה" /><button class="pf-item__del" aria-label="מחיקה">×</button>`;
-      item.querySelector(".pf-item__del").addEventListener("click", () => {
-        URL.revokeObjectURL(url); item.remove();
-      });
-      grid.prepend(item);
-    });
-    if (files.length) toast(`<b>${[...files].length}</b> תמונות נוספו לתיק העבודות`);
+  if (dots) {
+    dots.innerHTML = Array.from({ length: pages }, (_, i) =>
+      `<button class="blog__dot ${i === 0 ? "active" : ""}" data-p="${i}"></button>`).join("");
+    dots.querySelectorAll(".blog__dot").forEach((d) =>
+      d.addEventListener("click", () => { pfPage = +d.dataset.p; paint(); }));
   }
+
+  const prev = document.getElementById("pfPrev");
+  const next = document.getElementById("pfNext");
+  if (prev) prev.addEventListener("click", () => { pfPage = (pfPage - 1 + pages) % pages; paint(); });
+  if (next) next.addEventListener("click", () => { pfPage = (pfPage + 1) % pages; paint(); });
+
+  paint();
+}
+
+function pfCard(w) {
+  return `
+  <figure class="pf-item">
+    <img src="${w.src}" alt="${w.title}" loading="lazy" />
+    <figcaption class="pf-item__cap">${w.title}</figcaption>
+  </figure>`;
 }
 
 /* ---------- טופס וואטסאפ ---------- */

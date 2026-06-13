@@ -319,6 +319,310 @@ const ARTICLES = [
   },
 ];
 
+// ---------- תיק עבודות (16 עבודות, מוצגות 4 בכל פעם) ----------
+/* ====== שיפורים: עמוד בלוג נפרד + קרוסלת תיק עבודות + תיקון טופס ====== */
+(function () {
+  // לכידת setInterval כדי לשלוט בסבב הבלוג (להחליף 7ש' ב-9ש')
+  var __nat = window.setInterval;
+  window.__vnIv = [];
+  window.setInterval = function (fn, delay) {
+    var id = __nat.apply(window, arguments);
+    window.__vnIv.push({ id: id, delay: delay });
+    return id;
+  };
+
+  window.addEventListener("load", function () { setTimeout(vnInit, 80); });
+
+  function vnInit() {
+    vnStyles();
+    vnBlog();
+    vnPortfolio();
+  }
+
+  function articleBody(a) {
+    return a.content || a.body || a.text || a.html || a.full || "";
+  }
+  function articleExcerpt(a) {
+    var e = a.excerpt || a.summary || a.lead || a.subtitle || "";
+    if (!e) {
+      var b = String(articleBody(a)).replace(/<[^>]+>/g, " ");
+      e = b.slice(0, 150).trim() + (b.length > 150 ? "…" : "");
+    }
+    return e;
+  }
+  function articleHtml(a) {
+    var b = articleBody(a);
+    if (/[<][a-zA-Z]/.test(b)) return b;
+    return String(b)
+      .split(/\n{1,}/)
+      .filter(function (p) { return p.trim(); })
+      .map(function (p) { return "<p>" + p.trim() + "</p>"; })
+      .join("");
+  }
+
+  /* ---------- בלוג: 3 מאמרים מתחלפים בבית + עמוד מלא לכל המאמרים ---------- */
+  function vnBlog() {
+    var blog = document.getElementById("blog");
+    var all = document.querySelector(".blog__all");
+    if (all) all.remove();
+
+    if (blog) {
+      var lead = blog.querySelector(".section__lead");
+      if (lead) lead.textContent = "שלושה מאמרים מתחלפים — לצפייה בכל המאמרים פתחו את עמוד הבלוג.";
+      if (!blog.querySelector(".blog__more")) {
+        var more = document.createElement("div");
+        more.className = "blog__more";
+        var btn = document.createElement("a");
+        btn.href = "#blog-all";
+        btn.className = "btn btn--gold";
+        btn.textContent = "לכל המאמרים ←";
+        btn.addEventListener("click", function (e) { e.preventDefault(); openBlogAll(); });
+        more.appendChild(btn);
+        blog.appendChild(more);
+      }
+    }
+
+    // סבב כל 9 שניות במקום 7
+    (window.__vnIv || []).forEach(function (it) {
+      if (it.delay === 7000) clearInterval(it.id);
+    });
+    var next = document.getElementById("blogNext");
+    if (next) setInterval(function () {
+      if (!document.body.classList.contains("vn-lock")) next.click();
+    }, 9000);
+
+    if (location.hash === "#blog-all") setTimeout(openBlogAll, 200);
+  }
+
+  function openBlogAll() {
+    if (typeof ARTICLES === "undefined") return;
+    var ov = document.getElementById("vnBlogAll");
+    if (!ov) {
+      ov = document.createElement("div");
+      ov.id = "vnBlogAll";
+      ov.className = "vn-overlay";
+      ov.innerHTML =
+        '<div class="vn-overlay__bar">' +
+          '<span class="vn-overlay__title">כל המאמרים</span>' +
+          '<button class="vn-overlay__close" aria-label="סגירה">✕</button>' +
+        '</div>' +
+        '<div class="vn-overlay__body"></div>';
+      document.body.appendChild(ov);
+      ov.querySelector(".vn-overlay__close").addEventListener("click", closeBlogAll);
+      ov.addEventListener("click", function (e) { if (e.target === ov) closeBlogAll(); });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeBlogAll();
+      });
+    }
+    renderBlogAllList(ov.querySelector(".vn-overlay__body"));
+    document.body.classList.add("vn-lock");
+    ov.classList.add("is-open");
+  }
+
+  function closeBlogAll() {
+    var ov = document.getElementById("vnBlogAll");
+    if (ov) ov.classList.remove("is-open");
+    document.body.classList.remove("vn-lock");
+    if (location.hash === "#blog-all") history.replaceState(null, "", location.pathname + location.search);
+  }
+
+  function renderBlogAllList(box) {
+    box.innerHTML = '<div class="vn-articles"></div>';
+    var grid = box.querySelector(".vn-articles");
+    ARTICLES.forEach(function (a) {
+      var card = document.createElement("article");
+      card.className = "vn-art-card";
+      card.innerHTML =
+        '<span class="vn-art-card__top">' + (a.tag || a.category || "מאמר") + '</span>' +
+        '<h3>' + (a.title || "") + '</h3>' +
+        '<p>' + articleExcerpt(a) + '</p>' +
+        '<span class="vn-art-card__more">קראו עוד ←</span>';
+      card.addEventListener("click", function () { renderBlogAllArticle(box, a); });
+      grid.appendChild(card);
+    });
+    box.scrollTop = 0;
+  }
+
+  function renderBlogAllArticle(box, a) {
+    box.innerHTML =
+      '<button class="vn-back">→ חזרה לכל המאמרים</button>' +
+      '<article class="vn-art-full">' +
+        '<span class="vn-art-card__top">' + (a.tag || a.category || "מאמר") + '</span>' +
+        '<h2>' + (a.title || "") + '</h2>' +
+        '<div class="vn-art-full__body">' + articleHtml(a) + '</div>' +
+      '</article>';
+    box.querySelector(".vn-back").addEventListener("click", function () { renderBlogAllList(box); });
+    box.scrollTop = 0;
+  }
+
+  /* ---------- תיק עבודות: קרוסלה של 4 עבודות בכל פעם מתוך 16 ---------- */
+  function vnPortfolio() {
+    var grid = document.getElementById("portfolioGrid");
+    if (!grid || typeof PORTFOLIO === "undefined") return;
+
+    var up = document.querySelector(".portfolio__upload");
+    if (up) up.remove();
+
+    var pf = document.getElementById("portfolio");
+    if (pf) {
+      var lead = pf.querySelector(".section__lead");
+      if (lead) lead.textContent = "מבחר מהיצירות שלי — גללו לעוד עבודות.";
+    }
+
+    if (document.querySelector(".pf-nav")) return;
+
+    var PER = 4;
+    var pages = Math.ceil(PORTFOLIO.length / PER);
+    var page = 0;
+
+    var nav = document.createElement("div");
+    nav.className = "pf-nav";
+    nav.innerHTML =
+      '<button class="pf-arrow" id="vnPfPrev" aria-label="הקודם">→</button>' +
+      '<div class="pf-dots" id="vnPfDots"></div>' +
+      '<button class="pf-arrow" id="vnPfNext" aria-label="הבא">←</button>';
+    grid.insertAdjacentElement("afterend", nav);
+    var dots = nav.querySelector("#vnPfDots");
+
+    function swatch(p) {
+      if (!p || !p.length) return "var(--gold-grad)";
+      if (p.length === 1) return p[0];
+      return "linear-gradient(135deg," + p.join(",") + ")";
+    }
+    function render() {
+      var items = PORTFOLIO.slice(page * PER, page * PER + PER);
+      grid.innerHTML = items.map(function (w) {
+        return '<figure class="pf-card">' +
+          '<div class="pf-card__ph" style="background:' + swatch(w.palette) + '">✦</div>' +
+          '<img src="' + w.img + '" alt="' + (w.title || "") + '" loading="lazy" onerror="this.style.display=\'none\'" />' +
+          '<figcaption class="pf-card__cap">' + (w.title || "") + '</figcaption>' +
+          '</figure>';
+      }).join("");
+      Array.prototype.forEach.call(dots.children, function (d, i) {
+        d.classList.toggle("is-active", i === page);
+      });
+    }
+    for (var i = 0; i < pages; i++) {
+      (function (idx) {
+        var d = document.createElement("button");
+        d.className = "pf-dot";
+        d.setAttribute("aria-label", "עמוד " + (idx + 1));
+        d.addEventListener("click", function () { page = idx; render(); });
+        dots.appendChild(d);
+      })(i);
+    }
+    nav.querySelector("#vnPfPrev").addEventListener("click", function () {
+      page = (page - 1 + pages) % pages; render();
+    });
+    nav.querySelector("#vnPfNext").addEventListener("click", function () {
+      page = (page + 1) % pages; render();
+    });
+    render();
+
+    // גלילה/החלקה למעבר בין עמודים
+    var sx = 0;
+    grid.addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; }, { passive: true });
+    grid.addEventListener("touchend", function (e) {
+      var dx = e.changedTouches[0].clientX - sx;
+      if (Math.abs(dx) > 50) {
+        page = dx < 0 ? (page + 1) % pages : (page - 1 + pages) % pages;
+        render();
+      }
+    }, { passive: true });
+    grid.addEventListener("wheel", function (e) {
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 30) {
+        e.preventDefault();
+        page = e.deltaX > 0 ? (page + 1) % pages : (page - 1 + pages) % pages;
+        render();
+      }
+    }, { passive: false });
+  }
+
+  /* ---------- סגנונות ---------- */
+  function vnStyles() {
+    if (document.getElementById("vn-css")) return;
+    var css =
+      ".field--select{position:relative;}" +
+      ".field--select .field__top-label{display:block;font-size:13px;color:var(--gold);margin-bottom:8px;letter-spacing:.04em;}" +
+      ".field--select select{padding:14px 16px;width:100%;}" +
+      ".blog__more{text-align:center;margin-top:42px;}" +
+      ".pf-card{position:relative;aspect-ratio:3/4;border-radius:16px;overflow:hidden;margin:0;background:var(--navy-2);box-shadow:0 18px 40px rgba(8,18,40,.35);}" +
+      ".pf-card__ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;color:rgba(255,255,255,.5);}" +
+      ".pf-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease);}" +
+      ".pf-card:hover img{transform:scale(1.06);}" +
+      ".pf-card__cap{position:absolute;left:0;right:0;bottom:0;padding:26px 14px 13px;font-family:var(--serif);font-size:1.12rem;color:#fff;background:linear-gradient(to top,rgba(8,16,36,.88),transparent);}" +
+      ".pf-nav{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:30px;}" +
+      ".pf-arrow{width:48px;height:48px;border-radius:50%;border:1px solid var(--gold);background:transparent;color:var(--gold);font-size:1.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s var(--ease);}" +
+      ".pf-arrow:hover{background:var(--gold);color:var(--navy);}" +
+      ".pf-dots{display:flex;gap:10px;}" +
+      ".pf-dot{width:11px;height:11px;border-radius:50%;border:none;background:rgba(201,161,74,.35);cursor:pointer;padding:0;transition:all .3s var(--ease);}" +
+      ".pf-dot.is-active{background:var(--gold);transform:scale(1.25);}" +
+      "body.vn-lock{overflow:hidden;}" +
+      ".vn-overlay{position:fixed;inset:0;z-index:9999;background:rgba(6,12,28,.6);backdrop-filter:blur(6px);opacity:0;visibility:hidden;transition:opacity .4s var(--ease);display:flex;flex-direction:column;}" +
+      ".vn-overlay.is-open{opacity:1;visibility:visible;}" +
+      ".vn-overlay__bar{display:flex;align-items:center;justify-content:space-between;padding:20px 6vw;background:var(--navy);border-bottom:1px solid rgba(201,161,74,.3);}" +
+      ".vn-overlay__title{font-family:var(--serif);font-size:1.8rem;color:var(--gold);}" +
+      ".vn-overlay__close{width:44px;height:44px;border-radius:50%;border:1px solid var(--gold);background:transparent;color:var(--gold);font-size:1.1rem;cursor:pointer;transition:all .3s var(--ease);}" +
+      ".vn-overlay__close:hover{background:var(--gold);color:var(--navy);}" +
+      ".vn-overlay__body{flex:1;overflow-y:auto;padding:42px 6vw 80px;background:var(--cream);}" +
+      ".vn-articles{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:26px;max-width:1200px;margin:0 auto;}" +
+      ".vn-art-card{background:#fff;border:1px solid var(--cream-2);border-radius:16px;padding:28px;cursor:pointer;transition:transform .4s var(--ease),box-shadow .4s var(--ease);}" +
+      ".vn-art-card:hover{transform:translateY(-6px);box-shadow:0 22px 50px rgba(10,31,68,.16);}" +
+      ".vn-art-card__top{display:inline-block;font-size:12px;letter-spacing:.12em;color:var(--gold);margin-bottom:14px;text-transform:uppercase;}" +
+      ".vn-art-card h3{font-family:var(--serif);font-size:1.55rem;color:var(--navy);margin:0 0 12px;}" +
+      ".vn-art-card p{color:#4a4a4a;line-height:1.7;margin:0 0 16px;}" +
+      ".vn-art-card__more{color:var(--gold);font-weight:600;}" +
+      ".vn-art-full{max-width:760px;margin:0 auto;}" +
+      ".vn-art-full h2{font-family:var(--serif);font-size:2.4rem;color:var(--navy);margin:6px 0 22px;}" +
+      ".vn-art-full__body{color:#33373f;line-height:1.95;font-size:1.08rem;}" +
+      ".vn-art-full__body p{margin:0 0 18px;}" +
+      ".vn-back{background:transparent;border:1px solid var(--gold);color:var(--navy);border-radius:30px;padding:10px 22px;cursor:pointer;margin-bottom:30px;transition:all .3s var(--ease);}" +
+      ".vn-back:hover{background:var(--gold);color:#fff;}";
+    var s = document.createElement("style");
+    s.id = "vn-css";
+    s.textContent = css;
+    document.head.appendChild(s);
+  }
+}); // נוטרל — קרוסלת תיק העבודות והבלוג מנוהלים ב-main.js וב-HTML הקנוני
+
+const PF_IMG = (id) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=700&q=80`;
+
+// ---------- אינסטגרם ----------
+const IG_USER = "vala_nahshonov";
+const IG_URL = `https://www.instagram.com/${IG_USER}/`;
+// פוסטים נבחרים מהפיד. כשיהיו קישורים אמיתיים לפוסטים — החליפו את ערך ה-link בכתובת הפוסט.
+const INSTAGRAM = [
+  { img: PF_IMG("1490481651871-ab68de25d43d"), caption: "שמלת ערב נייבי · קולקציה חדשה", link: IG_URL, palette: ["#0a1f44", "#16315f", "#c9a14a"] },
+  { img: PF_IMG("1539008835657-9e8e9680c956"), caption: "פורטרט אופנה מהסטודיו", link: IG_URL, palette: ["#faf6ed", "#f0e6cf", "#c9a14a"] },
+  { img: PF_IMG("1469334031218-e382a71b716b"), caption: "שמלת מקסי זורמת", link: IG_URL, palette: ["#c9a14a", "#e6c87a", "#0a1f44"] },
+  { img: PF_IMG("1572804013309-59a88b7e92f1"), caption: "תפירה ומחויטות · מאחורי הקלעים", link: IG_URL, palette: ["#0a1f44", "#c9a14a", "#faf6ed"] },
+  { img: PF_IMG("1502716119720-b23a93e5fe1b"), caption: "מינימל שמנת · פרטים", link: IG_URL, palette: ["#f0e6cf", "#faf6ed", "#c9a14a"] },
+  { img: PF_IMG("1487412720507-e7ab37603c6f"), caption: "אלגנט שחור־זהב", link: IG_URL, palette: ["#0a1f44", "#0d2350", "#e6c87a"] },
+];
+
+/* תיקון שדה "נושא הפנייה": לא מוצגת בחירה לפני שבוחרים */
+window.addEventListener("load", function () {
+  var sel = document.getElementById("cSubject");
+  if (!sel) return;
+  // הסרת תווית כפולה (תווית צפה/סטטית) כדי שלא תשב על הטקסט
+  var lbl = sel.parentElement && sel.parentElement.querySelector(".field__top-label, .field__label--static, label");
+  if (lbl) lbl.remove();
+  // הוספת אופציית ברירת מחדל שאינה נבחרת מראש
+  if (!sel.querySelector('option[value=""]')) {
+    var ph = document.createElement("option");
+    ph.value = "";
+    ph.textContent = "נושא הפנייה";
+    ph.disabled = true;
+    ph.selected = true;
+    sel.insertBefore(ph, sel.firstChild);
+  }
+  sel.value = "";
+  sel.classList.add("is-placeholder");
+  sel.addEventListener("change", function () {
+    sel.classList.toggle("is-placeholder", sel.value === "");
+  });
+});
+
 // ---------- עמודי מידע: הצהרת נגישות, מדיניות ופרטיות ----------
 const PAGES = {
   accessibility: {
@@ -393,3 +697,24 @@ const PAGES = {
     `,
   },
 };
+
+// ---------- תיק עבודות: 16 תמונות עבודות אופנה ----------
+const PORTFOLIO = [
+  { src: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80", title: "ערב בנייבי" },
+  { src: "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=600&q=80", title: "גזרת מקסי" },
+  { src: "https://images.unsplash.com/photo-1485462537746-965f33f7f6a7?w=600&q=80", title: "שמלת זהב" },
+  { src: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600&q=80", title: "קולקציית סטודיו" },
+  { src: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=600&q=80", title: "אלגנט שמנת" },
+  { src: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&q=80", title: "סטיילינג מלא" },
+  { src: "https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=600&q=80", title: "שמלת ערב" },
+  { src: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&q=80", title: "מראה רחוב" },
+  { src: "https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?w=600&q=80", title: "פרטים מחויטים" },
+  { src: "https://images.unsplash.com/photo-1496661269814-a841e78df103?w=600&q=80", title: "אופנת ערב" },
+  { src: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&q=80", title: "פורטרט אופנה" },
+  { src: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=600&q=80", title: "סטייל קלאסי" },
+  { src: "https://images.unsplash.com/photo-1542295669297-4d352b042bca?w=600&q=80", title: "שמלת נשף" },
+  { src: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600&q=80", title: "ערב זהוב" },
+  { src: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600&q=80", title: "תנועה ובד" },
+  { src: "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?w=600&q=80", title: "מבט אופנתי" },
+];
+

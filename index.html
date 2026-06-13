@@ -165,7 +165,7 @@
     <div class="section__head">
       <p class="section__eyebrow" data-reveal>גלריה</p>
       <h2 class="section__title" data-reveal>תיק עבודות</h2>
-      <p class="section__lead" data-reveal>מבחר מהיצירות שלי. ניתן להעלות ולהציג עבודות חדשות.</p>
+      <p class="section__lead" data-reveal>מבחר מהיצירות שלי — גללו לעבודות נוספות.</p>
     </div>
 
     <div class="portfolio__reel" data-reveal>
@@ -176,16 +176,13 @@
       <span class="portfolio__reel-tag">מתוך הסטודיו · עיצוב חי</span>
     </div>
 
-    <div class="portfolio__upload" data-reveal>
-      <input type="file" id="portfolioInput" accept="image/*" multiple hidden />
-      <button class="portfolio__upload-btn" id="portfolioUploadBtn">
-        <span class="portfolio__upload-icon">↑</span>
-        <span>העלאת תמונות לתיק העבודות</span>
-        <small>גררו לכאן או לחצו לבחירה</small>
-      </button>
-    </div>
+    <div class="portfolio__grid" id="portfolioGrid" data-reveal></div>
 
-    <div class="portfolio__grid" id="portfolioGrid"></div>
+    <div class="portfolio__nav">
+      <button class="blog__arrow" id="pfPrev" aria-label="הקודם">→</button>
+      <div class="blog__dots" id="pfDots"></div>
+      <button class="blog__arrow" id="pfNext" aria-label="הבא">←</button>
+    </div>
   </section>
 
   <!-- ===== בלוג ===== -->
@@ -204,9 +201,27 @@
       <button class="blog__arrow" id="blogNext" aria-label="הבא">←</button>
     </div>
 
-    <div class="blog__all" data-reveal>
-      <h3>כל המאמרים</h3>
-      <div class="blog__list" id="blogList"></div>
+    <div class="blog__all-cta" data-reveal>
+      <a class="btn btn--ghost" href="articles.html">לכל המאמרים ←</a>
+    </div>
+
+    <!-- ===== פיד אינסטגרם ===== -->
+    <div class="ig" data-reveal>
+      <div class="ig__head">
+        <span class="ig__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2.5" y="2.5" width="19" height="19" rx="5.5"></rect>
+            <circle cx="12" cy="12" r="4.2"></circle>
+            <circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"></circle>
+          </svg>
+        </span>
+        <a class="ig__handle" href="https://www.instagram.com/vala_nahshonov/" target="_blank" rel="noopener">@vala_nahshonov</a>
+        <p class="ig__sub">רגעים מהסטודיו, קולקציות ומאחורי הקלעים</p>
+      </div>
+      <div class="ig__grid" id="igGrid"></div>
+      <div class="ig__cta">
+        <a class="btn btn--gold" href="https://www.instagram.com/vala_nahshonov/" target="_blank" rel="noopener">עקבו אחריי באינסטגרם</a>
+      </div>
     </div>
   </section>
 
@@ -230,7 +245,8 @@
           <input type="tel" id="cPhone" required placeholder=" " />
           <label for="cPhone">טלפון</label>
         </div>
-        <div class="field">
+        <div class="field field--select">
+          <label for="cSubject" class="field__top-label">נושא הפנייה</label>
           <select id="cSubject">
             <option value="עיצוב אישי">עיצוב אישי / תפירה</option>
             <option value="רכישה מהחנות">רכישה מהחנות</option>
@@ -238,7 +254,6 @@
             <option value="שמלת כלה">שמלת כלה</option>
             <option value="אחר">אחר</option>
           </select>
-          <label for="cSubject" class="field__label--static">נושא הפנייה</label>
         </div>
         <div class="field">
           <textarea id="cMsg" rows="3" placeholder=" "></textarea>
