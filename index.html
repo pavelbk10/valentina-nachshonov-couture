@@ -54,6 +54,46 @@
     ]
   }
   </script>
+
+  <!-- Structured Data: FAQ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "כמה זמן לוקח לתפור שמלה בהתאמה אישית?",
+        "acceptedAnswer": { "@type": "Answer", "text": "תהליך התפירה האישית נמשך בדרך כלל בין 4 ל־8 שבועות, תלוי במורכבות העיצוב ובעומס בסטודיו. לאירועים דחופים ניתן לתאם מראש ולמצוא פתרון מהיר יותר." }
+      },
+      {
+        "@type": "Question",
+        "name": "האם אפשר לקבוע פגישת ייעוץ לפני הזמנה?",
+        "acceptedAnswer": { "@type": "Answer", "text": "בהחלט. אני מזמינה אתכן לפגישת ייעוץ אישית בסטודיו, שבה נכיר, נבין את החזון שלכן ונבחר יחד את הכיוון, הבד והגזרה — ללא התחייבות." }
+      },
+      {
+        "@type": "Question",
+        "name": "איך עובד תהליך השכרת שמלת ערב?",
+        "acceptedAnswer": { "@type": "Answer", "text": "בוחרים שמלה מתוך מבחר ההשכרה, מתאמים מדידה, ולוקחים את השמלה לכמה ימים סביב האירוע. נדרש פיקדון שמוחזר עם החזרת השמלה במצב תקין." }
+      },
+      {
+        "@type": "Question",
+        "name": "האם מבצעים התאמות ותיקונים?",
+        "acceptedAnswer": { "@type": "Answer", "text": "כן. כל שמלה שנתפרת או מושכרת עוברת התאמות מדויקות כדי שתשב בצורה מושלמת על הגוף." }
+      },
+      {
+        "@type": "Question",
+        "name": "באילו אזורים ניתן לקבל שירות?",
+        "acceptedAnswer": { "@type": "Answer", "text": "הסטודיו ממוקם במרכז הארץ, ואני נותנת שירות ללקוחות מכל רחבי הארץ." }
+      },
+      {
+        "@type": "Question",
+        "name": "מהו טווח המחירים?",
+        "acceptedAnswer": { "@type": "Answer", "text": "המחיר משתנה לפי סוג הפריט, מורכבות העיצוב והבדים הנבחרים. בפגישת הייעוץ נבנה יחד הצעה מותאמת לתקציב ולצרכים שלכן." }
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
   <!-- ===== מסך טעינה ===== -->
@@ -74,7 +114,9 @@
         <a href="#store" class="nav__link">חנות</a>
         <a href="#rental" class="nav__link">השכרת שמלות</a>
         <a href="#portfolio" class="nav__link">תיק עבודות</a>
+        <a href="#testimonials" class="nav__link">המלצות</a>
         <a href="#blog" class="nav__link">בלוג</a>
+        <a href="#faq" class="nav__link">שאלות נפוצות</a>
         <a href="#contact" class="nav__link nav__link--cta">צרו קשר</a>
       </nav>
       <button class="nav__burger" id="navBurger" aria-label="תפריט">
@@ -230,6 +272,16 @@
     </div>
   </section>
 
+  <!-- ===== המלצות לקוחות ===== -->
+  <section class="tst" id="testimonials">
+    <div class="section__head">
+      <p class="section__eyebrow" data-reveal>לקוחות מספרות</p>
+      <h2 class="section__title" data-reveal>המלצות</h2>
+      <p class="section__lead" data-reveal>החוויה של נשים שבחרו בעיצוב שלי — בלשונן.</p>
+    </div>
+    <div class="tst__grid" id="tstGrid"></div>
+  </section>
+
   <!-- ===== בלוג ===== -->
   <section class="blog" id="blog">
     <div class="section__head">
@@ -268,6 +320,26 @@
         <a class="btn btn--gold" href="https://www.instagram.com/vala_nahshonov/" target="_blank" rel="noopener">עקבו אחריי באינסטגרם</a>
       </div>
     </div>
+  </section>
+
+  <!-- ===== באנר תיאום פגישת ייעוץ ===== -->
+  <section class="consult" id="consult">
+    <div class="consult__inner" data-reveal>
+      <p class="consult__eyebrow">פגישה אישית, ללא התחייבות</p>
+      <h2 class="consult__title">מוכנה ליצור את השמלה שלך?</h2>
+      <p class="consult__lead">בואי נשב יחד, נכיר ונבחר את הכיוון, הבד והגזרה שמתאימים בדיוק לך ולאירוע שלך.</p>
+      <button class="btn btn--gold consult__btn" id="consultBtn" type="button">לתיאום פגישת ייעוץ בוואטסאפ</button>
+    </div>
+  </section>
+
+  <!-- ===== שאלות נפוצות ===== -->
+  <section class="faq" id="faq">
+    <div class="section__head">
+      <p class="section__eyebrow" data-reveal>טוב לדעת</p>
+      <h2 class="section__title" data-reveal>שאלות נפוצות</h2>
+      <p class="section__lead" data-reveal>כל מה שרציתן לדעת לפני שמתחילים — במקום אחד.</p>
+    </div>
+    <div class="faq__list" id="faqList"></div>
   </section>
 
   <!-- ===== טופס יצירת קשר ===== -->

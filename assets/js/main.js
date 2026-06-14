@@ -13,6 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
   renderStore();
   renderRentals();
   renderBlog();
+  renderTestimonials();
+  renderFaq();
+  initConsult();
   renderInstagram();
   initPortfolio();
   initContactForm();
@@ -358,6 +361,71 @@ function blogCard(a) {
       <span class="blog-card__more">קריאת המאמר</span>
     </div>
   </article>`;
+}
+
+/* ---------- המלצות לקוחות ---------- */
+function renderTestimonials() {
+  const grid = document.getElementById("tstGrid");
+  if (!grid || typeof TESTIMONIALS === "undefined") return;
+  grid.innerHTML = TESTIMONIALS.map(tstCard).join("");
+}
+
+function tstCard(t) {
+  const stars = "★".repeat(t.rating || 5);
+  const initial = (t.name || "").trim().charAt(0);
+  return `
+  <article class="tst-card">
+    <div class="tst-card__stars" aria-label="דירוג ${t.rating || 5} מתוך 5">${stars}</div>
+    <p class="tst-card__text">${t.text}</p>
+    <div class="tst-card__author">
+      <span class="tst-card__avatar" aria-hidden="true">${initial}</span>
+      <span class="tst-card__meta">
+        <span class="tst-card__name">${t.name}</span>
+        <span class="tst-card__role">${t.role}</span>
+      </span>
+    </div>
+  </article>`;
+}
+
+/* ---------- שאלות נפוצות (אקורדיון) ---------- */
+function renderFaq() {
+  const list = document.getElementById("faqList");
+  if (!list || typeof FAQ === "undefined") return;
+  list.innerHTML = FAQ.map((f, i) => `
+    <div class="faq-item">
+      <button class="faq-item__q" type="button" aria-expanded="false" aria-controls="faqA${i}">
+        <span>${f.q}</span>
+        <span class="faq-item__icon" aria-hidden="true">+</span>
+      </button>
+      <div class="faq-item__a" id="faqA${i}" role="region">
+        <p>${f.a}</p>
+      </div>
+    </div>`).join("");
+
+  list.querySelectorAll(".faq-item__q").forEach((btn) =>
+    btn.addEventListener("click", () => {
+      const item = btn.closest(".faq-item");
+      const open = item.classList.contains("open");
+      list.querySelectorAll(".faq-item").forEach((it) => {
+        it.classList.remove("open");
+        it.querySelector(".faq-item__q").setAttribute("aria-expanded", "false");
+      });
+      if (!open) {
+        item.classList.add("open");
+        btn.setAttribute("aria-expanded", "true");
+      }
+    })
+  );
+}
+
+/* ---------- כפתור תיאום פגישת ייעוץ ---------- */
+function initConsult() {
+  const btn = document.getElementById("consultBtn");
+  if (!btn) return;
+  btn.addEventListener("click", () => {
+    sendWa("היי ולנטינה! 👋 אשמח לתאם פגישת ייעוץ אישית. מתי יתאים לך?");
+    toast("מעבירה אותך לוואטסאפ ✦");
+  });
 }
 
 /* ---------- פיד אינסטגרם ---------- */

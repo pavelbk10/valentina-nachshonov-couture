@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>מאמר | ולנטינה נחשונוב</title>
+  <meta name="description" content="מאמר אופנה מאת ולנטינה נחשונוב — מעצבת שמלות ערב וקולקציות מחויטות." />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#0a1f44" />
+  <link id="canonical" rel="canonical" href="https://pavelbk10.github.io/valentina-nachshonov-couture/article.html" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Frank+Ruhl+Libre:wght@300;400;500;600;700;900&family=Assistant:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="nav nav--solid" id="nav">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo">
+        <span class="nav__logo-mark">VN</span>
+        <span class="nav__logo-text">ולנטינה נחשונוב</span>
+      </a>
+      <nav class="nav__links">
+        <a href="index.html" class="nav__link">בית</a>
+        <a href="articles.html" class="nav__link">בלוג</a>
+        <a href="index.html#store" class="nav__link">חנות</a>
+        <a href="index.html#contact" class="nav__link nav__link--cta">צרו קשר</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page-wrap">
+    <article class="article" id="articleRoot">
+      <p class="article__loading">טוען מאמר…</p>
+    </article>
+  </main>
+
+  <footer class="page-foot">
+    <p>© 2026 ולנטינה נחשונוב · מעצבת בגדים</p>
+    <a href="articles.html" class="btn btn--ghost">לכל המאמרים ←</a>
+  </footer>
+
+  <script src="assets/js/data.js"></script>
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var id = params.get("id");
+      var root = document.getElementById("articleRoot");
+      var article = (typeof ARTICLES !== "undefined") ? ARTICLES.find(function (a) { return a.id === id; }) : null;
+
+      if (!article) {
+        root.innerHTML =
+          '<div class="article__missing"><h1>המאמר לא נמצא</h1>' +
+          '<p>ייתכן שהקישור שגוי או שהמאמר הוסר.</p>' +
+          '<a class="btn btn--gold" href="articles.html">לכל המאמרים ←</a></div>';
+        return;
+      }
+
+      var base = "https://pavelbk10.github.io/valentina-nachshonov-couture/article.html?id=" + article.id;
+
+      document.title = article.title + " | ולנטינה נחשונוב";
+      document.querySelector('meta[name="description"]').setAttribute("content", article.excerpt);
+      document.getElementById("canonical").setAttribute("href", base);
+
+      // Open Graph + Twitter
+      var metaTags = [
+        ["property", "og:type", "article"],
+        ["property", "og:locale", "he_IL"],
+        ["property", "og:title", article.title],
+        ["property", "og:description", article.excerpt],
+        ["property", "og:url", base],
+        ["property", "og:image", "https://pavelbk10.github.io/valentina-nachshonov-couture/assets/img/valentina.jpg"],
+        ["name", "twitter:card", "summary_large_image"],
+        ["name", "twitter:title", article.title],
+        ["name", "twitter:description", article.excerpt]
+      ];
+      metaTags.forEach(function (t) {
+        var m = document.createElement("meta");
+        m.setAttribute(t[0], t[1]);
+        m.setAttribute("content", t[2]);
+        document.head.appendChild(m);
+      });
+
+      // Article JSON-LD
+      var ld = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": article.title,
+        "description": article.excerpt,
+        "articleSection": article.category,
+        "datePublished": article.date,
+        "image": "https://pavelbk10.github.io/valentina-nachshonov-couture/assets/img/valentina.jpg",
+        "mainEntityOfPage": { "@type": "WebPage", "@id": base },
+        "author": { "@type": "Person", "name": "ולנטינה נחשונוב", "sameAs": "https://www.instagram.com/vala_nahshonov/" },
+        "publisher": { "@type": "Organization", "name": "ולנטינה נחשונוב Couture" }
+      };
+      var s = document.createElement("script");
+      s.type = "application/ld+json";
+      s.textContent = JSON.stringify(ld);
+      document.head.appendChild(s);
+
+      // Render body
+      var paragraphs = article.body.split("\n\n").map(function (p) {
+        return "<p>" + p.trim() + "</p>";
+      }).join("");
+
+      function swatchStyle(p) {
+        return "background: linear-gradient(150deg, " + p[0] + " 0%, " + p[1] + " 55%, " + p[2] + " 100%);";
+      }
+
+      root.innerHTML =
+        '<div class="article__hero" style="' + swatchStyle(article.palette) + '">' +
+          '<span class="article__cat">' + article.category + '</span>' +
+        '</div>' +
+        '<div class="article__head">' +
+          '<h1 class="article__title">' + article.title + '</h1>' +
+          '<div class="article__meta"><span>' + article.date + '</span><span>•</span><span>' + article.read + '</span></div>' +
+        '</div>' +
+        '<div class="article__body">' + paragraphs + '</div>' +
+        '<div class="article__back"><a class="btn btn--gold" href="articles.html">לכל המאמרים ←</a></div>';
+    })();
+  </script>
+</body>
+</html>
