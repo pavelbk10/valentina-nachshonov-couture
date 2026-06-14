@@ -342,7 +342,7 @@ function renderBlog() {
   // החלפה אוטומטית
   setInterval(() => {
     blogPage = (blogPage + 1) % pages; paint();
-  }, 7000);
+  }, 9000);
 }
 
 function blogCard(a) {

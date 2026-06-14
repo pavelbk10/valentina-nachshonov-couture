@@ -61,7 +61,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .btn {
   display: inline-flex; align-items: center; gap: 10px; justify-content: center;
   padding: 15px 32px; border-radius: 100px; font-weight: 500; font-size: 15px; letter-spacing: .3px;
-  position: relative; overflow: hidden; transition: transform .4s var(--ease), box-shadow .4s var(--ease); cursor: none;
+  position: relative; overflow: hidden; transition: transform .4s var(--ease), box-shadow .4s var(--ease); cursor: pointer;
 }
 .btn--gold { background: var(--gold-grad); color: var(--navy); box-shadow: 0 12px 30px -10px rgba(201,161,74,.6); }
 .btn--gold:hover { transform: translateY(-3px); box-shadow: 0 20px 40px -12px rgba(201,161,74,.7); }
@@ -228,7 +228,7 @@ section { position: relative; }
 
 /* ---------- בלוג ---------- */
 .blog__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; min-height: 460px; }
-.blog-card { background: #fff; border-radius: var(--r-lg); overflow: hidden; box-shadow: 0 14px 40px -28px rgba(10,31,68,.4); border: 1px solid rgba(10,31,68,.06); cursor: none; transition: transform .55s var(--ease), box-shadow .55s var(--ease); display: flex; flex-direction: column; animation: fadeUp .6s var(--ease) both; }
+.blog-card { background: #fff; border-radius: var(--r-lg); overflow: hidden; box-shadow: 0 14px 40px -28px rgba(10,31,68,.4); border: 1px solid rgba(10,31,68,.06); cursor: pointer; transition: transform .55s var(--ease), box-shadow .55s var(--ease); display: flex; flex-direction: column; animation: fadeUp .6s var(--ease) both; }
 .blog-card:hover { transform: translateY(-8px); box-shadow: var(--shadow); }
 .blog-card__media { aspect-ratio: 16/10; position: relative; }
 .blog-card__media::after { content: '✦'; position: absolute; inset: 0; display: grid; place-items: center; font-size: 54px; color: rgba(255,255,255,.2); }
@@ -284,7 +284,7 @@ section { position: relative; }
 .contact__panel .section__title { font-size: clamp(36px, 5vw, 58px); }
 .contact__form { margin-top: 34px; display: flex; flex-direction: column; gap: 22px; }
 .field { position: relative; }
-.field input, .field textarea, .field select { width: 100%; padding: 18px 18px 8px; border: 1.5px solid rgba(10,31,68,.18); border-radius: var(--r-md); background: #fff; font-family: inherit; font-size: 16px; color: var(--navy); transition: border-color .3s; cursor: none; resize: none; }
+.field input, .field textarea, .field select { width: 100%; padding: 18px 18px 8px; border: 1.5px solid rgba(10,31,68,.18); border-radius: var(--r-md); background: #fff; font-family: inherit; font-size: 16px; color: var(--navy); transition: border-color .3s; resize: none; }
 .field select { padding: 22px 18px 10px; }
 .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: var(--gold); }
 .field label { position: absolute; right: 18px; top: 17px; color: rgba(10,31,68,.5); font-size: 16px; pointer-events: none; transition: .3s var(--ease); }
