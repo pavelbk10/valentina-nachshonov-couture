@@ -428,15 +428,90 @@ html.a11y-font-scale .section__lead, html.a11y-font-scale .about__p, html.a11y-f
 
 /* ---------- שאלות נפוצות ---------- */
 .faq { padding: clamp(70px, 9vw, 120px) clamp(20px, 6vw, 90px); }
-.faq__list { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
-.faq-item { background: var(--cream); border: 1px solid var(--cream-2); border-radius: var(--r-md); overflow: hidden; transition: border-color .4s var(--ease); }
-.faq-item.open { border-color: var(--gold); }
-.faq-item__q { width: 100%; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 16px; text-align: right; padding: 22px 26px; font-family: var(--serif); font-size: clamp(17px, 2.2vw, 21px); color: var(--navy); }
-.faq-item__icon { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--gold-grad); color: var(--navy); font-size: 22px; line-height: 1; transition: transform .4s var(--ease); }
-.faq-item.open .faq-item__icon { transform: rotate(45deg); }
-.faq-item__a { max-height: 0; overflow: hidden; transition: max-height .5s var(--ease); }
-.faq-item.open .faq-item__a { max-height: 420px; }
-.faq-item__a p { padding: 0 26px 24px; color: var(--navy); font-size: 16px; font-weight: 400; line-height: 1.85; }
+.faq__list { max-width: 880px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+.faq-item {
+  position: relative;
+  background: var(--cream);
+  border: 1px solid var(--cream-2);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: 0 6px 22px -18px rgba(10,31,68,.5);
+  transition: border-color .45s var(--ease), box-shadow .45s var(--ease), transform .45s var(--ease), background .45s var(--ease);
+}
+.faq-item::before {
+  content: "";
+  position: absolute;
+  top: 0; right: 0;
+  width: 3px; height: 100%;
+  background: var(--gold-grad);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform .5s var(--ease);
+}
+.faq-item:hover { border-color: var(--gold-2); transform: translateY(-2px); box-shadow: 0 16px 36px -22px rgba(10,31,68,.55); }
+.faq-item.open { border-color: var(--gold); background: #fffdf7; box-shadow: 0 20px 44px -24px rgba(201,161,74,.5); }
+.faq-item.open::before { transform: scaleY(1); }
+.faq-item__q {
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  text-align: right;
+  padding: 24px 28px;
+  font-family: var(--serif);
+  font-size: clamp(17px, 2.2vw, 22px);
+  color: var(--navy);
+  transition: color .35s var(--ease);
+}
+.faq-item.open .faq-item__q { color: var(--navy-3); }
+.faq-item__icon {
+  flex: none;
+  position: relative;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--gold-grad);
+  color: var(--navy);
+  font-size: 0;
+  box-shadow: 0 6px 16px -8px rgba(201,161,74,.8);
+  transition: transform .5s var(--ease), box-shadow .45s var(--ease);
+}
+.faq-item__icon::before,
+.faq-item__icon::after {
+  content: "";
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 13px; height: 2.2px;
+  border-radius: 2px;
+  background: var(--navy);
+  transform: translate(-50%, -50%);
+  transition: transform .5s var(--ease), opacity .4s var(--ease);
+}
+.faq-item__icon::after { transform: translate(-50%, -50%) rotate(90deg); }
+.faq-item:hover .faq-item__icon { transform: rotate(90deg); }
+.faq-item.open .faq-item__icon { transform: rotate(135deg); box-shadow: 0 8px 20px -6px rgba(201,161,74,.9); }
+.faq-item.open .faq-item__icon::after { opacity: 0; }
+.faq-item__a {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows .55s var(--ease);
+}
+.faq-item.open .faq-item__a { grid-template-rows: 1fr; }
+.faq-item__a > div { overflow: hidden; }
+.faq-item__a p {
+  padding: 0 28px 26px;
+  color: var(--navy);
+  font-size: 16.5px;
+  font-weight: 400;
+  line-height: 1.9;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity .5s var(--ease) .08s, transform .5s var(--ease) .08s;
+}
+.faq-item.open .faq-item__a p { opacity: 1; transform: none; }
 
 /* ---------- עמודי מאמר נפרדים (SEO) ---------- */
 .nav--solid { position: sticky; background: rgba(10,31,68,.92); backdrop-filter: blur(18px); box-shadow: 0 10px 40px -20px rgba(0,0,0,.5); padding: 14px 0; }

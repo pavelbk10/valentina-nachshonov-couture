@@ -395,10 +395,10 @@ function renderFaq() {
     <div class="faq-item">
       <button class="faq-item__q" type="button" aria-expanded="false" aria-controls="faqA${i}">
         <span>${f.q}</span>
-        <span class="faq-item__icon" aria-hidden="true">+</span>
+        <span class="faq-item__icon" aria-hidden="true"></span>
       </button>
       <div class="faq-item__a" id="faqA${i}" role="region">
-        <p>${f.a}</p>
+        <div><p>${f.a}</p></div>
       </div>
     </div>`).join("");
 
