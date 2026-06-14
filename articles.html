@@ -64,7 +64,7 @@
       if (!grid || typeof ARTICLES === "undefined") return;
       grid.innerHTML = ARTICLES.map(function (a) {
         return `
-        <a class="blog-card" href="article.html?id=${a.id}">
+        <a class="blog-card" href="article-${a.id}.html">
           <div class="blog-card__media" style="${swatchStyle(a.palette)}">
             <span class="blog-card__cat">${a.category}</span>
           </div>
